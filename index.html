@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Будь моей валентинкой 💕</title>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Marck+Script&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(160deg, #1a0a0e 0%, #2d0f1a 30%, #4a1525 60%, #1a0a0e 100%);
+      font-family: 'Caveat', 'Marck Script', cursive;
+      overflow-x: hidden;
+      color: #fff;
+    }
+
+    /* Декоративные сердечки на фоне */
+    .bg-hearts {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.15;
+    }
+    .bg-hearts span {
+      position: absolute;
+      font-size: 24px;
+      animation: float 8s ease-in-out infinite;
+    }
+    .bg-hearts span:nth-child(1) { left: 5%; top: 10%; animation-delay: 0s; }
+    .bg-hearts span:nth-child(2) { left: 85%; top: 20%; animation-delay: 1s; }
+    .bg-hearts span:nth-child(3) { left: 15%; top: 70%; animation-delay: 2s; }
+    .bg-hearts span:nth-child(4) { left: 90%; top: 60%; animation-delay: 0.5s; }
+    .bg-hearts span:nth-child(5) { left: 50%; top: 5%; animation-delay: 1.5s; }
+    .bg-hearts span:nth-child(6) { left: 70%; top: 80%; animation-delay: 2.5s; }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
+      50% { transform: translateY(-20px) scale(1.1); opacity: 1; }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      transition: opacity 0.5s ease;
+    }
+
+    .container.hidden {
+      opacity: 0;
+      pointer-events: none;
+      position: absolute;
+    }
+
+    .photo-wrap {
+      width: min(320px, 90vw);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(200, 50, 80, 0.4), 0 0 0 4px rgba(255, 182, 193, 0.3);
+      margin-bottom: 24px;
+      animation: photoAppear 0.6s ease;
+    }
+    @keyframes photoAppear {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .photo-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+    }
+
+    .question {
+      font-size: clamp(28px, 6vw, 42px);
+      text-align: center;
+      margin-bottom: 32px;
+      text-shadow: 0 2px 20px rgba(255, 105, 180, 0.5);
+      color: #ffb6c1;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .buttons-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 480px;
+      min-height: 80px;
+      margin: 0 auto;
+    }
+
+    .btn {
+      border: none;
+      cursor: pointer;
+      font-family: 'Caveat', cursive;
+      font-weight: 700;
+      border-radius: 50px;
+      transition: box-shadow 0.25s ease;
+      position: absolute;
+      top: 50%;
+    }
+
+    .btn-no {
+      left: 72%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      background: linear-gradient(145deg, #4a4a4a, #2d2d2d);
+      color: #e0e0e0;
+      padding: 14px 28px;
+      font-size: 26px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    .btn-no:hover {
+      transform: translate(-50%, -50%) scale(1.05);
+    }
+
+    .btn-yes {
+      left: 28%;
+      --scale: 1;
+      transform: translate(-50%, -50%) scale(var(--scale));
+      z-index: 2;
+      background: linear-gradient(145deg, #e91e63, #c2185b);
+      color: #fff;
+      padding: 14px 28px;
+      font-size: 26px;
+      box-shadow: 0 6px 24px rgba(233, 30, 99, 0.5);
+      transform-origin: center;
+    }
+
+    .btn-yes:hover {
+      transform: translate(-50%, -50%) scale(calc(var(--scale) * 1.05));
+    }
+
+    .btn-yes.scaling {
+      transition: transform 0.4s ease;
+    }
+
+    /* Экран праздника */
+    .celebration {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: linear-gradient(160deg, #1a0a0e 0%, #4a1525 50%, #1a0a0e 100%);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .celebration.active {
+      display: flex;
+      animation: fadeIn 0.6s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .hearts-container {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .heart-particle {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      font-size: 28px;
+      animation: flyOut 2.5s ease-out forwards;
+      opacity: 0;
+    }
+    @keyframes flyOut {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.2);
+      }
+      15% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0.9;
+        transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1);
+      }
+    }
+
+    .celebration-photo {
+      position: relative;
+      z-index: 2;
+      width: min(520px, 92vw);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(200, 50, 80, 0.4), 0 0 0 4px rgba(255, 182, 193, 0.25);
+      margin-bottom: 20px;
+      animation: photoAppear 0.8s ease 0.2s both;
+    }
+    .celebration-photo img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+    }
+
+    .celebration-text {
+      position: relative;
+      z-index: 2;
+      font-size: clamp(22px, 4.5vw, 36px);
+      text-align: center;
+      line-height: 1.4;
+      color: #ffb6c1;
+      text-shadow: 0 0 30px rgba(255, 105, 180, 0.6);
+      max-width: 900px;
+      margin-bottom: 24px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+
+    .big-heart {
+      font-size: 120px;
+      animation: heartBeat 0.8s ease-in-out infinite;
+    }
+    @keyframes heartBeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-hearts" aria-hidden="true">
+    <span>❤</span><span>💕</span><span>💗</span><span>❤</span><span>💕</span><span>💗</span>
+  </div>
+
+  <div class="container" id="mainScreen">
+    <div class="photo-wrap">
+      <img id="photo" src="images/1.png" alt="Фото">
+    </div>
+    <p class="question">Ты будешь моей валентинкой?</p>
+    <div class="buttons-wrap">
+      <button type="button" class="btn btn-yes" id="btnYes">Да</button>
+      <button type="button" class="btn btn-no" id="btnNo">Нет</button>
+    </div>
+  </div>
+
+  <div class="celebration" id="celebration">
+    <div class="hearts-container" id="heartsContainer"></div>
+    <div class="celebration-photo">
+      <img src="images/1771020889466-oyhydeka6t.png" alt="Свадьба">
+    </div>
+    <p class="celebration-text">ИДИ НАХУЙ АНЖЕЛ))))</p>
+    <span class="big-heart" aria-hidden="true">❤️</span>
+  </div>
+
+  <script>
+    const photos = ['images/1.png', 'images/2.jpg', 'images/3.png', 'images/4.png'];
+    const scales = [1, 1.25, 1.6, 6]; // после 3-го "Нет" (фото 4) кнопка "Да" полностью перекрывает "Нет"
+    let stage = 0;
+
+    const el = {
+      photo: document.getElementById('photo'),
+      btnYes: document.getElementById('btnYes'),
+      btnNo: document.getElementById('btnNo'),
+      mainScreen: document.getElementById('mainScreen'),
+      celebration: document.getElementById('celebration'),
+      heartsContainer: document.getElementById('heartsContainer'),
+    };
+
+    function setYesScale(s) {
+      el.btnYes.classList.add('scaling');
+      el.btnYes.style.setProperty('--scale', s);
+    }
+
+    function nextStage() {
+      stage++;
+      if (stage >= photos.length) stage = photos.length - 1;
+      el.photo.src = photos[stage];
+      setYesScale(scales[stage]);
+    }
+
+    function showCelebration() {
+      el.mainScreen.classList.add('hidden');
+      el.celebration.classList.add('active');
+
+      const hearts = ['❤️', '💕', '💗', '❤', '💖'];
+      const count = 50;
+      for (let i = 0; i < count; i++) {
+        const heart = document.createElement('span');
+        heart.className = 'heart-particle';
+        heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+        const angle = (Math.PI * 2 * i) / count + Math.random();
+        const dist = 150 + Math.random() * 350;
+        const tx = Math.cos(angle) * dist;
+        const ty = Math.sin(angle) * dist - 50;
+        heart.style.setProperty('--tx', tx + 'px');
+        heart.style.setProperty('--ty', ty + 'px');
+        heart.style.animationDelay = Math.random() * 0.3 + 's';
+        el.heartsContainer.appendChild(heart);
+      }
+    }
+
+    setYesScale(scales[0]);
+
+    el.btnYes.addEventListener('click', showCelebration);
+
+    el.btnNo.addEventListener('click', function () {
+      nextStage();
+    });
+  </script>
+</body>
+</html>
